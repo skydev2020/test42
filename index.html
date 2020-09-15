@@ -1,7 +1,15 @@
 <script>
-	var propNum = 2;
-	
-	function sort(iList, propIndex, valueField) {
+	var propNum = 0;
+
+	function search(key, myArray){
+	    for (var i=0; i < myArray.length; i++) {
+	        if (myArray[i].prop === key) {
+	            return myArray[i];
+	        }
+	    }
+	}
+
+	function absort(iList, propIndex, valueField) {
 		
 		var subProp = null;
 		var prop = "property" + propIndex;
@@ -19,20 +27,51 @@
 				fList.push(iList[i]);
 			}
 			else {
-				if (!aList[key]) {
-					aList[key] = {total: 0, data: []};					
+				var eleItem = search(key, aList);
+				
+				if (!eleItem) {
+					eleItem = {prop: key, total: 0, data: []};
+					eleItem.data.push(iList[i]);
+					// if (iList[i][subProp] == '$total') {
+					// 	eleItem.total = iList[i][valueField];
+					// }
+					aList.push(eleItem);
 				}
-				aList[key].data.push(iList[i]);
+				else {
+					eleItem.data.push(iList[i]);
+					// if (iList[i][subProp] == '$total') {
+					// 	eleItem.total = iList[i][valueField];
+					// }
+				}
 				if (iList[i][subProp] == '$total') {
-					aList[key].total = iList[i][valueField]
-				}			
+					eleItem.total = iList[i][valueField];
+				}
+				
+							
 			}
 		}
 
+		console.log(aList);
+		return;
+		var sortable=[];
+		for(var key in aList)
+			if(aList.hasOwnProperty(key))
+				sortable.push([key, aList[key]]); // each item is an array in format [key, value]
+		
+		// sort items by value
+		sortable.sort(function(a, b)
+		{
+			var x=a[1].total,
+				y=b[1].total;
+			return x<y ? 1 : x>y ? -1 : 0;
+		});
+		console.log(sortable);
+		
 		// add $total
-		// for (var key in aList) {
-		//     console.log(arr_jq_TabContents[key]);
-		// }
+		for (i=0; i<sortable.length; i++) {
+		    fList[sortable[i][0]] = sortable[i][1];
+		}
+
 
 		// for (i=0; i<aList.length; i++) {
 		// 	var key = iList[i][prop];
@@ -41,8 +80,8 @@
 		// 	}
 		// 	aList[key].push(iList[i]);
 		// }
-		console.log(fList);		
-		return aList;
+		// console.log(aList);		
+		return fList;
 
 	}
 
@@ -52,8 +91,15 @@
 		var fields = arr[0].split("|"); // First Line contains property and values
 		var iList = [];
 
+		
+		for (var i=0; i<fields.length; i++) {
+			if (fields[i].includes("property")) {
+				propNum++;
+			}
+		}
+
 		arr.shift(); // remove first line;
-		for (var i=0; i<arr.length; i++) {
+		for (i=0; i<arr.length; i++) {
 			var values = arr[i].split("|");
 			var ele = {};
 
@@ -64,8 +110,8 @@
 			iList.push(ele);
 		}
 
-		console.log(iList);
-		console.log(sort(iList, 0, "net_sales"));
+		// console.log(iList);
+		console.log(absort(iList, 0, "net_sales"));
 	}
 </script>
 <html>
