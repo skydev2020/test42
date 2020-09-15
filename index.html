@@ -16,6 +16,10 @@
 		var aList = [];
 		var fList = []; // Final List to return
 
+		if (propIndex == propNum ) {
+			return iList;
+		}
+
 		if (propIndex < propNum -1) {
 			subProp = "property" + (propIndex+1);
 		}
@@ -32,54 +36,41 @@
 				if (!eleItem) {
 					eleItem = {prop: key, total: 0, data: []};
 					eleItem.data.push(iList[i]);
-					// if (iList[i][subProp] == '$total') {
-					// 	eleItem.total = iList[i][valueField];
-					// }
 					aList.push(eleItem);
 				}
 				else {
 					eleItem.data.push(iList[i]);
-					// if (iList[i][subProp] == '$total') {
-					// 	eleItem.total = iList[i][valueField];
-					// }
 				}
-				if (iList[i][subProp] == '$total') {
-					eleItem.total = iList[i][valueField];
+
+				if (subProp == null) {					
+					eleItem.total = iList[i][valueField];					
 				}
-				
-							
+				else {
+					if (iList[i][subProp] == '$total') {
+						eleItem.total = iList[i][valueField];
+					}	
+				}
+											
 			}
 		}
 
-		console.log(aList);
-		return;
-		var sortable=[];
-		for(var key in aList)
-			if(aList.hasOwnProperty(key))
-				sortable.push([key, aList[key]]); // each item is an array in format [key, value]
-		
-		// sort items by value
-		sortable.sort(function(a, b)
-		{
-			var x=a[1].total,
-				y=b[1].total;
-			return x<y ? 1 : x>y ? -1 : 0;
+		aList.sort(function(a, b) {
+		    return b.total - a.total;
 		});
-		console.log(sortable);
-		
-		// add $total
-		for (i=0; i<sortable.length; i++) {
-		    fList[sortable[i][0]] = sortable[i][1];
+
+		// console.log(aList);
+		// return;
+		// assuming aList is sorted and put it to fList
+
+		for (i=0; i<aList.length; i++) {
+
+			var subList = absort(aList[i].data, propIndex+1, valueField);
+
+			for (j=0; j<subList.length; j++) {
+				fList.push(subList[j]);
+			}
+			
 		}
-
-
-		// for (i=0; i<aList.length; i++) {
-		// 	var key = iList[i][prop];
-		// 	if (!aList[key]) {
-		// 		aList[key] = [];				
-		// 	}
-		// 	aList[key].push(iList[i]);
-		// }
 		// console.log(aList);		
 		return fList;
 
@@ -90,7 +81,7 @@
 		var arr = inputField.value.split("\n");
 		var fields = arr[0].split("|"); // First Line contains property and values
 		var iList = [];
-
+		propNum = 0;
 		
 		for (var i=0; i<fields.length; i++) {
 			if (fields[i].includes("property")) {
