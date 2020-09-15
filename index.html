@@ -6,12 +6,21 @@
 		var subProp = null;
 		var prop = "property" + propIndex;
 		var aList = [];
+		var fList = []; // Final List to return
 
 		if (propIndex < propNum -1) {
 			subProp = "property" + (propIndex+1);
 		}
 
 		for (var i=0; i<iList.length; i++) {
+			var key = iList[i][prop];
+			if (!aList[key]) {
+				aList[key] = [];				
+			}
+			aList[key].push(iList[i]);
+		}
+
+		for (i=0; i<aList.length; i++) {
 			var key = iList[i][prop];
 			if (!aList[key]) {
 				aList[key] = [];				
