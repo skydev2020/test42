@@ -1,5 +1,5 @@
 <script>
-	var propNum = 0;
+	var propNum = 2;
 	
 	function sort(iList, propIndex, valueField) {
 		
@@ -14,20 +14,34 @@
 
 		for (var i=0; i<iList.length; i++) {
 			var key = iList[i][prop];
-			if (!aList[key]) {
-				aList[key] = [];				
+			
+			if (key == '$total') {
+				fList.push(iList[i]);
 			}
-			aList[key].push(iList[i]);
+			else {
+				if (!aList[key]) {
+					aList[key] = {total: 0, data: []};					
+				}
+				aList[key].data.push(iList[i]);
+				if (iList[i][subProp] == '$total') {
+					aList[key].total = iList[i][valueField]
+				}			
+			}
 		}
 
-		for (i=0; i<aList.length; i++) {
-			var key = iList[i][prop];
-			if (!aList[key]) {
-				aList[key] = [];				
-			}
-			aList[key].push(iList[i]);
-		}
-		
+		// add $total
+		// for (var key in aList) {
+		//     console.log(arr_jq_TabContents[key]);
+		// }
+
+		// for (i=0; i<aList.length; i++) {
+		// 	var key = iList[i][prop];
+		// 	if (!aList[key]) {
+		// 		aList[key] = [];				
+		// 	}
+		// 	aList[key].push(iList[i]);
+		// }
+		console.log(fList);		
 		return aList;
 
 	}
@@ -51,7 +65,7 @@
 		}
 
 		console.log(iList);
-		console.log(sort(iList, 0, "a"));
+		console.log(sort(iList, 0, "net_sales"));
 	}
 </script>
 <html>
